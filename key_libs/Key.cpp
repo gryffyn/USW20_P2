@@ -9,7 +9,7 @@
 #include "Xor.h"
 
 std::string Key::gen_key(){
-    auto rand = std::random_device();
+    std::random_device rand;
     auto prng = std::ranlux48_base(rand.operator()());
     unsigned long long int key = prng.operator()();
     return std::to_string(key);
