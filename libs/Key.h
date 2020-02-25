@@ -12,7 +12,6 @@ public:
     explicit Key(std::string pass);
     std::string get_key();
 private:
-    static std::string gen_key();
     std::string keyinitial;
     std::string finalkey;
 };

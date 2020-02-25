@@ -4,10 +4,10 @@
 // A copy is included in LICENSE
 
 #include <iostream>
-#include "key_libs/Key.h"
+#include "libs/Key.h"
 
 int main() {
-    Key key(";'[,/.,");
+    Key key("hello");
     std::cout << key.get_key();
     return 0;
 }
