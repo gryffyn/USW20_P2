@@ -5,8 +5,10 @@
 
 #include <iostream>
 #include "libs/Key.h"
+#include <sodium.h>
 
 int main() {
+    sodium_init();
     Key key("hello");
     std::cout << key.get_key();
     return 0;

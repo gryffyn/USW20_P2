@@ -8,4 +8,4 @@ add_executable(USW20_P2 main.cpp libs/Key.cpp libs/User.cpp libs/User.h libs/Stu
 find_package(Boost)
 link_directories(libs/sodium)
 include_directories(libs/sodium)
-target_link_libraries(${PROJECT_NAME} libsodium)
+target_link_libraries(${PROJECT_NAME} sodium)
