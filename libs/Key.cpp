@@ -7,16 +7,11 @@
 #include "Key.h"
 #include <sstream>
 #include <sodium.h>
-#include <sqlite3.h>
 
 class hash_exception : public std::exception {
     [[nodiscard]] const char * what () const noexcept override{
         return "Hash func ran out of memory";
     }
-};
-
-struct key_salt{
-
 };
 
 Key::Key(const std::string& pass) {
