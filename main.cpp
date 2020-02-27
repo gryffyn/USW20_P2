@@ -3,23 +3,25 @@
 // All components are licensed under the MIT License.
 // A copy is included in LICENSE
 
+#include "User.h"
 #include <sodium.h>
 
 #include <iostream>
 
+#include "Log.h"
 #include "ObjStore.h"
 #include "cxxopts.hpp"
 #include "libs/Key.h"
-#include "Log.h"
 
 bool verbose;
 
 int main(int argc, char **argv) {
     cxxopts::Options options("USWCyberLab",
                              "USW Cyber Lab file storage program");
-    options.add_options()("v,verbose","Verbose output");
+    options.add_options()("v,verbose","Verbose output")("h,help", "Prints help");
     auto result = options.parse(argc, argv);
     verbose = result["verbose"].as<bool>();
+    if (result.count("help")) { std::cout << options.help() << std::endl; exit(0); }
     Log log;
     if (verbose) {log.write("Verbose output enabled.");}
     log.write("Initializing sodium...");

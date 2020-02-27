@@ -3,3 +3,9 @@
 //
 
 #include "User.h"
+#include "Key.h"
+
+void User::hashpw(const std::string& unhashed) {
+    Key key(unhashed);
+    pass = key.get_key();
+}
