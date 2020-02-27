@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Build
 
 on: [push]
 
@@ -9,7 +9,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: prepare
+      run: sudo apt-get install libsqlite3-dev
     - name: configure
       run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug ../
     - name: build
-      run: cd .. && cmake --build build --target USW20_P2 -- -j 4
+      run: cmake --build build --target USW20_P2 -- -j 4
