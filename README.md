@@ -1,6 +1,6 @@
 # USW20_P2
 
-USW Cyber Lab digital storage application
+USW Cyber Lab digital storage application.
 
 ## License
 
