@@ -17,6 +17,7 @@ class ObjStore {
    private:
     void open_db(const std::string& dbname);
     sqlite3* db;
+    void init_db();
 };
 
 #endif  // USW20_P2_OBJSTORE_H

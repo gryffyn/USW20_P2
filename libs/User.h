@@ -14,9 +14,10 @@ class User {
     std::string name;
     std::string user;
     char ID[8]{};
-    void hashpw(const std::string& unhashed);
+    void hashpw(std::string unhashed);
     std::string pass;
     std::string plain_pass;
+
    private:
 };
 
