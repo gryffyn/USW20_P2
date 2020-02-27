@@ -6,8 +6,13 @@
 #define USW20_P2_LOG_H
 
 
-class Log {
+#include <string>
 
+class Log {
+public:
+    Log();
+private:
+    void write(const std::string &msg);
 };
 
 
