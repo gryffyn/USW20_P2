@@ -6,9 +6,6 @@
 #define USW20_P2_STUDENT_H
 #include "User.h"
 
-class Student : public User{
+class Student : public User {};
 
-};
-
-
-#endif //USW20_P2_STUDENT_H
+#endif  // USW20_P2_STUDENT_H

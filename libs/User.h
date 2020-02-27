@@ -5,12 +5,9 @@
 #ifndef USW20_P2_USER_H
 #define USW20_P2_USER_H
 
-
 class User {
-public:
-
-protected:
+   public:
+   protected:
 };
 
-
-#endif //USW20_P2_USER_H
+#endif  // USW20_P2_USER_H
