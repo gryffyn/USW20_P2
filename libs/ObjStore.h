@@ -5,18 +5,18 @@
 #ifndef USW20_P2_OBJSTORE_H
 #define USW20_P2_OBJSTORE_H
 
-
-#include <string>
 #include <sqlite3.h>
 
+#include <string>
+
 class ObjStore {
-public:
+   public:
     explicit ObjStore(const std::string& dbname);
     void close_db();
-private:
+
+   private:
     void open_db(const std::string& dbname);
     sqlite3* db;
 };
 
-
-#endif //USW20_P2_OBJSTORE_H
+#endif  // USW20_P2_OBJSTORE_H

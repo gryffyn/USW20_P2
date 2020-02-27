@@ -5,15 +5,14 @@
 #ifndef USW20_P2_LOG_H
 #define USW20_P2_LOG_H
 
-
 #include <string>
 
 class Log {
-public:
+   public:
     Log();
-private:
+
+   private:
     void write(const std::string &msg);
 };
 
-
-#endif //USW20_P2_LOG_H
+#endif  // USW20_P2_LOG_H

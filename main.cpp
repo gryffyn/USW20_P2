@@ -3,19 +3,21 @@
 // All components are licensed under the MIT License.
 // A copy is included in LICENSE
 
-#include <iostream>
-#include "libs/Key.h"
 #include <sodium.h>
-#include "cxxopts.hpp"
+
+#include <iostream>
+
 #include "ObjStore.h"
+#include "cxxopts.hpp"
+#include "libs/Key.h"
 
-bool verbose,log;
+bool verbose, log;
 
-int main(int argc, char** argv) {
-    cxxopts::Options options("USWCyberLab", "USW Cyber Lab file storage program");
-    options.add_options()
-            ("l,log", "Enable logging")
-            ("v,verbose", "Verbose output");
+int main(int argc, char **argv) {
+    cxxopts::Options options("USWCyberLab",
+                             "USW Cyber Lab file storage program");
+    options.add_options()("l,log", "Enable logging")("v,verbose",
+                                                     "Verbose output");
     auto result = options.parse(argc, argv);
     verbose = result["verbose"].as<bool>();
     log = result["log"].as<bool>();

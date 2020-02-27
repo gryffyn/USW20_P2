@@ -3,15 +3,16 @@
 //
 
 #include "Log.h"
-#include <string>
-#include <filesystem>
-#include <iostream>
-#include <fstream>
+
 #include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 namespace fs = std::filesystem;
 
-Log::Log(){
+Log::Log() {
     fs::path logdir = fs::current_path() / "log";
     if (!fs::exists(logdir)) {
         try {
@@ -25,6 +26,4 @@ Log::Log(){
     std::ofstream logfile("");
 }
 
-void Log::write(const std::string& msg){
-
-}
+void Log::write(const std::string &msg) {}
