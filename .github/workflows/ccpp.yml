@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: prepare
-      run: sudo apt-get install libsqlite3-dev libsodium-dev libboost-all-dev
+      run: sudo apt-get install libsqlite3-dev libsodium-dev libboost-all-dev g++-9 && echo "::set-env name=CXX::g++-9"
     - name: configure
       run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug ../
     - name: build
