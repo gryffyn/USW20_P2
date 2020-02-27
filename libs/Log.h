@@ -5,14 +5,25 @@
 #ifndef USW20_P2_LOG_H
 #define USW20_P2_LOG_H
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <fstream>
 #include <string>
 
-class Log {
-   public:
-    Log();
+using namespace boost::posix_time;
 
+class Log {
    private:
-    void write(const std::string &msg);
+    std::ofstream logfile;
+    ptime timeUTC;
+    time_facet* file_facet = new time_facet("%Y%m%d-%H-%M-%S");
+    time_facet* entry_facet = new time_facet("%H:%M:%S%F");
+    enum level { INFO, WARN, ERR };
+
+   public:
+    explicit Log();
+    ~Log();
+    void write(level level, const std::string& msg);
+    void write(const std::string& msg);
 };
 
 #endif  // USW20_P2_LOG_H
