@@ -41,5 +41,8 @@ int main(int argc, char **argv) {
     users.close_db();
     log.write("user db closed");
     if (Key::verify_key(key.get_key(), "hello")) { std::cout << "\nPassword verified."; }
+
+    //TODO everything. literally everything
+
     return 0;
 }
