@@ -12,9 +12,9 @@ class Key {
    public:
     explicit Key(const std::string& pass);
     std::string get_key();
+    static bool verify_key(std::string key, std::string pass);
 
    private:
-    std::string keyinitial;
     std::string finalkey;
 };
 
