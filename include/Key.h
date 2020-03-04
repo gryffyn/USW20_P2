@@ -10,9 +10,10 @@
 
 class Key {
    public:
-    explicit Key(const std::string& pass);
+    explicit Key(std::string pass);
     std::string get_key();
     static bool verify_key(std::string key, std::string pass);
+    class pass_exception;
 
    private:
     std::string finalkey;

@@ -13,10 +13,9 @@
 #include "User.h"
 #include "cxxopts.hpp"
 #include "Key.h"
-#include <mysql/mariadb_com.h>
 
 bool verbose;
-`
+
 int main(int argc, char **argv) {
     Log log;
     cxxopts::Options options("USWCyberLab", "USW Cyber Lab file storage program");

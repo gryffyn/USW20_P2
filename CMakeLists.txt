@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-fmodules -fbuiltin-module-map --coverage")
 
-add_executable(USW20_P2 main.cpp include/Key.cpp include/User.cpp include/User.h include/Student.cpp include/Student.h include/ObjStore.cpp include/ObjStore.h include/Log.cpp include/Log.h)
+add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.h src/Student.cpp include/Student.h src/ObjStore.cpp include/ObjStore.h src/Log.cpp include/Log.h)
 find_package(Boost)
 find_package(SQLite3)
 link_directories(include/sodium)

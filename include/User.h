@@ -11,14 +11,23 @@
 class User {
    public:
    protected:
+    explicit User(char id[8], const std::string& name, std::string user, std::string unhashed);
     std::string name;
     std::string user;
     char ID[8]{};
-    void hashpw(std::string unhashed);
+    static std::string hashpw(std::string& unhashed);
     std::string pass;
     std::string plain_pass;
+    ~User();
 
    private:
+    void finalize();
+    struct User_details {
+        char id[8];
+        std::string user_name;
+        std::string user_user;
+        std::string user_pwhash;
+    };
 };
 
 #endif  // USW20_P2_USER_H

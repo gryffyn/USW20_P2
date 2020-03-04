@@ -8,6 +8,7 @@
 #include <sqlite3.h>
 
 #include <string>
+#include <vector>
 
 class ObjStore {
    public:
