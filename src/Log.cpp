@@ -34,22 +34,28 @@ Log::Log() {
 
 Log::~Log() { logfile.close(); }
 
-void Log::write(const std::string& msg) {
-    time_t rawtime;
-    struct tm* timeinfo;
-    char buffer[30];
-    time(&rawtime);
-    timeinfo = gmtime(&rawtime);
-    strftime(buffer, 30, "%FT%T", timeinfo);
-    logfile << "[" << buffer << "][INFO]: " << msg << std::endl;
-}
-
 void Log::write(level level, const std::string& msg) {
-    time_t rawtime;
-    struct tm* timeinfo;
-    char buffer[30];
-    time(&rawtime);
-    timeinfo = gmtime(&rawtime);
-    strftime(buffer, 30, "%FT%T", timeinfo);
-    logfile << "[" << buffer << "][" << level << "]: " << msg << std::endl;
+    if (verbose) {
+        time_t rawtime;
+        struct tm* timeinfo;
+        char buffer[30];
+        time(&rawtime);
+        timeinfo = gmtime(&rawtime);
+        strftime(buffer, 30, "%FT%T", timeinfo);
+        if (level == 0) {logfile << "[" << buffer << "][INFO]: " << msg << std::endl;}
+        else if (level == 1) {logfile << "[" << buffer << "][WARN]: " << msg << std::endl;}
+        else if (level == 2) {logfile << "[" << buffer << "][ERR]: " << msg << std::endl;}
+
+    } else {
+        if (!(level == 0)) {
+            time_t rawtime;
+            struct tm* timeinfo;
+            char buffer[30];
+            time(&rawtime);
+            timeinfo = gmtime(&rawtime);
+            strftime(buffer, 30, "%FT%T", timeinfo);
+            if (level == 1) {logfile << "[" << buffer << "][WARN]: " << msg << std::endl;}
+            else if (level == 2) {logfile << "[" << buffer << "][ERR]: " << msg << std::endl;}
+        }
+    }
 }

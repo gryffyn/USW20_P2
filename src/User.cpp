@@ -9,7 +9,12 @@
 
 #include "Key.h"
 
-User::User(char id[8], const std::string& name, std::string user, std::string unhashed){
+
+User::User(std::string id, const std::string& name, std::string user, std::string age; std::string unhashed){
+    user_details.id = id;
+    user_details.user_name = name;
+    user_details.user_user = user;
+    user_details.age = age;
 }
 
 std::string User::hashpw(std::string& unhashed) {
@@ -18,4 +23,8 @@ std::string User::hashpw(std::string& unhashed) {
         return key.get_key();
     } catch (std::exception& e) {
     }
+}
+
+User::user_details_s User::get_user() {
+    return user_details;
 }
