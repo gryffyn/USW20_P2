@@ -38,9 +38,7 @@ namespace Color {
 void create_user() {
     std::cout << "--------------------------------" << std::endl << "Welcome to the USW Cyber Lab.\n";
     std::cout << "Username: ";
-
 }
-
 
 int main(int argc, char **argv) {
     ObjStore db;

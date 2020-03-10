@@ -11,15 +11,28 @@ using namespace mariadb;
 
 void ObjStore::init_db() {
     create_connection();
-    std::string sql_command = ("CREATE TABLE IF NOT EXISTS Users ("
-                               "user_id INT NOT NULL PRIMARY KEY,"
-                               "user_type ENUM('Student', 'Lecturer', 'Admin') NOT NULL,"
-                               "name TEXT NOT NULL,"
-                               "user TEXT NOT NULL,"
-                               "pwhash TEXT NOT NULL,"
-                               "data MEDIUMTEXT,"
-                               "last_notif DATE);");
-    conn->execute(sql_command);
+    // creates Users table
+    conn->execute("CREATE TABLE IF NOT EXISTS Users ("
+                  "user_id INT NOT NULL PRIMARY KEY,"
+                  "name TEXT NOT NULL,"
+                  "user TEXT NOT NULL,"
+                  "pwhash TEXT NOT NULL);");
+    // creates Student table
+    conn->execute("CREATE TABLE IF NOT EXISTS Students ("
+                  "user_id INT NOT NULL PRIMARY KEY,"
+                  "data MEDIUMTEXT,"
+                  "last_notif datetime,"
+                  "CONSTRAINT fk_s_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id));");
+    // creates Admin table
+    conn->execute("CREATE TABLE IF NOT EXISTS Lecturers ("
+                  "user_id INT NOT NULL PRIMARY KEY,"
+                  "data MEDIUMTEXT,"
+                  "CONSTRAINT fk_l_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id));");
+    // creates Lectuer table
+    conn->execute("CREATE TABLE IF NOT EXISTS Admins ("
+                  "user_id INT NOT NULL PRIMARY KEY,"
+                  "CONSTRAINT fk_a_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id));");
+    // creates
 }
 
 void ObjStore::create_connection() {
