@@ -17,13 +17,11 @@ class Log {
     ptime timeUTC;
     time_facet* file_facet = new time_facet("%Y%m%d-%H-%M-%S");
     time_facet* entry_facet = new time_facet("%H:%M:%S%F");
-    enum level { INFO, WARN, ERR };
 
    public:
-    explicit Log();
-    ~Log();
+    bool verbose;
+    enum level { INFO = 0, WARN = 1, ERR = 2 };
     void write(level level, const std::string& msg);
-    void write(const std::string& msg);
 };
 
 #endif  // USW20_P2_LOG_H

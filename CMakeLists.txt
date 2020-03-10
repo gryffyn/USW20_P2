@@ -1,15 +1,29 @@
 cmake_minimum_required(VERSION 3.15)
 project(USW20_P2)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS --coverage)
+# set(CMAKE_CXX_FLAGS -I/usr/include/mysql -I/usr/include/mysql/mysql)
 
-add_executable(USW20_P2 main.cpp libs/Key.cpp libs/User.cpp libs/User.h libs/Student.cpp libs/Student.h libs/ObjStore.cpp libs/ObjStore.h libs/Log.cpp libs/Log.h)
+add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.h src/Student.cpp include/Student.h
+        src/ObjStore.cpp include/ObjStore.h src/Log.cpp include/Log.h
+        )
+
+# find directives
 find_package(Boost)
 find_package(SQLite3)
-link_directories(libs/sodium)
-include_directories(libs/sodium)
-include_directories(libs)
+find_package(yaml-cpp)
+find_package(mariadbclientpp)
+
+# include
+include_directories(include/sodium)
+include_directories(include)
+include_directories(/usr/include/mysql)
+include_directories(/usr/include/mysql/mysql)
+
+# target linking
 target_link_libraries(${PROJECT_NAME} sodium)
 target_link_libraries(${PROJECT_NAME} sqlite3)
+target_link_libraries(${PROJECT_NAME} mariadbclientpp::mariadbclientpp)
+
+
