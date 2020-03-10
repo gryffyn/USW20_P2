@@ -2,11 +2,12 @@
 // Created by gryffyn on 18/02/2020.
 //
 
-#ifndef USW20_P2_USER_H
-#define USW20_P2_USER_H
+#ifndef USW20_P2_USER_HPP
+#define USW20_P2_USER_HPP
 
 #include <string>
-#include "Key.h"
+
+#include "Key.hpp"
 
 class User {
    public:
@@ -22,4 +23,4 @@ class User {
     void finalize();
 };
 
-#endif  // USW20_P2_USER_H
+#endif  // USW20_P2_USER_HPP

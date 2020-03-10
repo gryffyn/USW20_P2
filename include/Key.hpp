@@ -3,8 +3,8 @@
 // All components are licensed under the MIT License.
 // A copy is included in LICENSE
 
-#ifndef USW20_P2_KEY_H
-#define USW20_P2_KEY_H
+#ifndef USW20_P2_KEY_HPP
+#define USW20_P2_KEY_HPP
 
 #include <string>
 
@@ -19,4 +19,4 @@ class Key {
     std::string finalkey;
 };
 
-#endif  // USW20_P2_KEY_H
+#endif  // USW20_P2_KEY_HPP

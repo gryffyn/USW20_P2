@@ -2,7 +2,7 @@
 // Created by gryffyn on 2/26/20.
 //
 
-#include "ObjStore.h"
+#include "ObjStore.hpp"
 
 #include <mariadb++/connection.hpp>
 #include <string>

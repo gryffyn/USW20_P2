@@ -8,11 +8,11 @@
 #include <iostream>
 #include <vector>
 
-#include "Log.h"
-#include "User.h"
+#include "Key.hpp"
+#include "Log.hpp"
+#include "ObjStore.hpp"
+#include "User.hpp"
 #include "cxxopts.hpp"
-#include "Key.h"
-#include "ObjStore.h"
 
 bool verbose;
 

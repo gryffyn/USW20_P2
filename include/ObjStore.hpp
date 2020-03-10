@@ -2,8 +2,8 @@
 // Created by gryffyn on 2/26/20.
 //
 
-#ifndef USW20_P2_OBJSTORE_H
-#define USW20_P2_OBJSTORE_H
+#ifndef USW20_P2_OBJSTORE_HPP
+#define USW20_P2_OBJSTORE_HPP
 
 #include <mariadb++/connection.hpp>
 
@@ -24,4 +24,4 @@ class ObjStore {
     void create_connection();
 };
 
-#endif  // USW20_P2_OBJSTORE_H
+#endif  // USW20_P2_OBJSTORE_HPP

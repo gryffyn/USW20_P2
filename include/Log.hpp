@@ -2,8 +2,8 @@
 // Created by gryffyn on 2/26/20.
 //
 
-#ifndef USW20_P2_LOG_H
-#define USW20_P2_LOG_H
+#ifndef USW20_P2_LOG_HPP
+#define USW20_P2_LOG_HPP
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <fstream>
@@ -24,4 +24,4 @@ class Log {
     void write(level level, const std::string& msg);
 };
 
-#endif  // USW20_P2_LOG_H
+#endif  // USW20_P2_LOG_HPP

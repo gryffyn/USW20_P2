@@ -3,7 +3,7 @@
 // All components are licensed under the MIT License.
 // A copy is included in LICENSE
 
-#include "Key.h"
+#include "Key.hpp"
 
 #include <sodium.h>
 

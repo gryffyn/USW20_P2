@@ -2,14 +2,13 @@
 // Created by gryffyn on 18/02/2020.
 //<
 
-#include "User.h"
+#include "User.hpp"
 
 #include <iostream>
 #include <utility>
-#include "ObjStore.h"
 
-#include "Key.h"
-
+#include "Key.hpp"
+#include "ObjStore.hpp"
 
 User::User(int id, const std::string& name, const std::string& user, std::string unhashed){
     ObjStore db;
