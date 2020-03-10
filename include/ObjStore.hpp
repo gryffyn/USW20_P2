@@ -13,9 +13,9 @@
 class ObjStore {
    public:
     void init_db();
-    void insert(const std::string& str);
-    void create(const std::string& str);
-    void select(const std::string& str);
+    mariadb::u64 insert(const std::string& str);
+    mariadb::u64 execute(const std::string& str);
+    mariadb::result_set_ref select(const std::string& str);
     void finalize();
 
    protected:

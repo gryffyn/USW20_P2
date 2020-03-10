@@ -12,11 +12,9 @@
 
 User::User(int id, const std::string& name, const std::string& user, std::string unhashed){
     ObjStore db;
-    usertype = "Student";
     std::stringstream ss;
-    ss << "INSERT INTO Users(user_id, user_type, name, user, pwhash) VALUES (" ;
-    ss << id << ", '" << usertype << "', '" << name << "', '" << user << "', '" << hashpw(unhashed) << "');";
-    std::string str = ss.str();
+    ss << "INSERT INTO Users(user_id, name, user, pwhash) VALUES (" ;
+    ss << id << ", '" << name << "', '" << user << "', '" << hashpw(unhashed) << "');";
     db.insert(ss.str());
 }
 
@@ -25,5 +23,8 @@ std::string User::hashpw(std::string& unhashed) {
         Key key(unhashed);
         return key.get_key();
     } catch (std::exception& e) {
+        return (e.what());
     }
 }
+
+

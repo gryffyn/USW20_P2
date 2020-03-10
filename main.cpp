@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 
     //TODO everything. literally everything
 
-    User user(23, "Evan Penner", "gryffyn", "password");
+    // User user(23, "Evan Penner", "gryffyn", "password");
     db.finalize();
     return 0;
 }

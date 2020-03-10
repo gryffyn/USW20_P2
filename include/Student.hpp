@@ -7,6 +7,12 @@
 #include "User.hpp"
 
 class Student : public User {
+   public:
+    explicit Student(int id, const std::string& name, const std::string& user, std::string unhashed);
+
+   protected:
+    void save_data(unsigned int userid, std::string data);
+    std::string get_data(unsigned int userid);
 };
 
 #endif  // USW20_P2_STUDENT_HPP
