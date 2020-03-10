@@ -13,40 +13,61 @@
 #include "DataStore.h"
 #include "cxxopts.hpp"
 #include "Key.h"
+#include "ObjStore.h"
 
 bool verbose;
 
+#include <ostream>
+namespace Color {
+    enum Code {
+        FG_RED      = 31,
+        FG_GREEN    = 32,
+        FG_BLUE     = 34,
+        FG_DEFAULT  = 39,
+        ST_INVIS    = 8,
+        ST_DEF      = 0
+    };
+    std::string setval(Code code, const std::string& input) {
+        std::stringstream ss;
+        ss << "\033[" << code << "m" << input << "\033[";
+        if (code < 30) { ss << "0m"; }
+        else { ss << "39m"; }
+        return ss.str();
+    }
+}
+
+void create_user() {
+    std::cout << "--------------------------------" << std::endl << "Welcome to the USW Cyber Lab.\n";
+    std::cout << "Username: ";
+
+}
+
+
 int main(int argc, char **argv) {
-    Log log;
+    ObjStore db;
+    db.init_db();
     cxxopts::Options options("USWCyberLab", "USW Cyber Lab file storage program");
     options.add_options()("v,verbose", "Verbose output - shows log levels INFO and WARN")("h,help", "Prints help");
     auto result = options.parse(argc, argv);
-    log.verbose = result["verbose"].as<bool>();
+    verbose = result["verbose"].as<bool>();
     if (result.count("help")) {
         std::cout << options.help() << std::endl;
         exit(0);
     }
-    log.write(Log::INFO, "Initializing sodium...");
+    // Log::write(Log::INFO, "Initializing sodium...");
     static_cast<void>(sodium_init());
-    log.write(Log::INFO, "Sodium initialized.");
+    // Log::write(Log::INFO, "Sodium initialized.");
     Key key("hello");
     std::cout << key.get_key();
     std::string str = key.get_key();
+    if (Key::verify_key(str, "hello")) { std::cout << "\n" << Color::setval(Color::FG_GREEN, "✔") << " Password verified!"; }
     std::string str_sub = str.substr(0, 20);
     std::cout << std::endl << str_sub;
-    if (Key::verify_key(str_sub, "hello")) { std::cout << "\nPassword verified."; }
-    else { log.write(Log::ERR, "nope"); }
+    if (!(Key::verify_key(str_sub, "hello"))) { std::cout << "\n" << Color::setval(Color::FG_RED, "✘") << " Password did not verify."; }
 
     //TODO everything. literally everything
 
-    DataStore storage;
-    storage.out << YAML::BeginMap;
-    storage.out << YAML::Key << "name";
-    storage.out << YAML::Value << "Ryan Braun";
-    storage.out << YAML::Key << "position";
-    storage.out << YAML::Value << "LF";
-    storage.out << YAML::EndMap;
-
-
+    User user(23, "Evan Penner", "gryffyn", "password");
+    db.finalize();
     return 0;
 }

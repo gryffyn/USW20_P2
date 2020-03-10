@@ -19,9 +19,7 @@ class Log {
     time_facet* entry_facet = new time_facet("%H:%M:%S%F");
 
    public:
-    bool verbose = false;
-    explicit Log();
-    ~Log();
+    bool verbose;
     enum level { INFO = 0, WARN = 1, ERR = 2 };
     void write(level level, const std::string& msg);
 };

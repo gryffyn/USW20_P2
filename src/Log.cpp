@@ -12,7 +12,8 @@
 
 namespace fs = std::filesystem;
 
-Log::Log() {
+
+void Log::write(level level, const std::string& msg) {
     fs::path logdir = fs::current_path() / "log";
     if (!fs::exists(logdir)) {
         try {
@@ -26,15 +27,10 @@ Log::Log() {
     char buffer[30];
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
-    strftime(buffer, 30, "%Y%m%d-%H-%M-%S", timeinfo);
+    strftime(buffer, 30, "%Y%m%d", timeinfo);
     std::stringstream ss;
     ss << buffer;
     logfile.open(("log/" + ss.str() + ".log"), std::ofstream::app);
-}
-
-Log::~Log() { logfile.close(); }
-
-void Log::write(level level, const std::string& msg) {
     if (verbose) {
         time_t rawtime;
         struct tm* timeinfo;
