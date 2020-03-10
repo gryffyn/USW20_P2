@@ -10,7 +10,6 @@
 
 #include "Log.h"
 #include "User.h"
-#include "DataStore.h"
 #include "cxxopts.hpp"
 #include "Key.h"
 #include "ObjStore.h"

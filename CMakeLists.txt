@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_CXX_FLAGS -I/usr/include/mysql -I/usr/include/mysql/mysql)
 
 add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.h src/Student.cpp include/Student.h
-        src/ObjStore.cpp include/ObjStore.h src/Log.cpp include/Log.h src/TxtStore.cpp include/TxtStore.h
-        src/DataStore.cpp include/DataStore.h)
+        src/ObjStore.cpp include/ObjStore.h src/Log.cpp include/Log.h
+        )
 
 # find directives
 find_package(Boost)
