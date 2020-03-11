@@ -9,7 +9,8 @@
 
 using namespace mariadb;
 
-void ObjStore::init_db() {
+bool ObjStore::init_db() {
+    bool status = false;
     create_connection();
     // creates Users table
     conn->execute("CREATE TABLE IF NOT EXISTS Users ("
@@ -36,6 +37,7 @@ void ObjStore::init_db() {
                   "CONSTRAINT fk_a_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
     // creates
+    return status;
 }
 
 void ObjStore::create_connection() {
@@ -45,13 +47,12 @@ void ObjStore::create_connection() {
     conn = connection::create(acc);
 }
 
-u64 ObjStore::insert(const std::string& str) {
-    u64 id = conn->insert(str);
-    return id;
+void ObjStore::insert(const std::string& str) {
+    conn->insert(str);
 }
 
 u64 ObjStore::execute(const std::string& str) {
-    u64 affected = conn->execute(str);
+    unsigned long long affected = conn->execute(str);
     return affected;
 }
 

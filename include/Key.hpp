@@ -16,7 +16,7 @@ class Key {
     class pass_exception;
 
    private:
-    std::string finalkey;
+    std::string finalkey{};
 };
 
 #endif  // USW20_P2_KEY_HPP

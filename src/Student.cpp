@@ -10,9 +10,12 @@
 
 using namespace mariadb;
 
-Student::Student(int id, const std::string& name, const std::string& user, std::string unhashed)
-    : User(id, name, user, std::move(unhashed)) {
+Student::Student(ObjStore& db, int id, const std::string& name, const std::string& user, std::string unhashed)
+    : User(db, id, name, user, std::move(unhashed)) {
+}
 
+Student::Student(ObjStore& db, const std::string& name, const std::string& user, std::string unhashed)
+    : User(db, name, user, std::move(unhashed)) {
 }
 
 void Student::save_data(unsigned int userid, std::string data) {

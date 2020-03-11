@@ -8,7 +8,8 @@
 
 class Student : public User {
    public:
-    explicit Student(int id, const std::string& name, const std::string& user, std::string unhashed);
+    explicit Student(ObjStore& db, int id, const std::string& name, const std::string& user, std::string unhashed);
+    explicit Student(ObjStore& db, const std::string& name, const std::string& user, std::string unhashed);
 
    protected:
     void save_data(unsigned int userid, std::string data);
