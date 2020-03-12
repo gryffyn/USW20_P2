@@ -11,14 +11,8 @@
 #include "Key.hpp"
 #include "ObjStore.hpp"
 
-User::User(ObjStore& db, int id, const std::string& name, const std::string& user, std::string unhashed){
-    std::stringstream ss;
-    ss << "INSERT INTO Users(user_id, name, user, pwhash) VALUES (" ;
-    ss << id << ", '" << name << "', '" << user << "', '" << hashpw(unhashed) << "');";
-    db.insert(ss.str());
-}
-
-User::User(ObjStore& db, const std::string& name, const std::string& user, std::string unhashed){
+User::User(ObjStore& u_db, const std::string& name, const std::string& user, std::string unhashed){
+    db = u_db;
     std::stringstream ss;
     ss << "INSERT INTO Users(name, user, pwhash) VALUES (" ;
     ss << "'" << name << "', '" << user << "', '" << hashpw(unhashed) << "');";
@@ -26,12 +20,8 @@ User::User(ObjStore& db, const std::string& name, const std::string& user, std::
 }
 
 std::string User::hashpw(std::string& unhashed) {
-    try {
-        Key key(unhashed);
-        return key.get_key();
-    } catch (std::exception& e) {
-        return (e.what());
-    }
+    Key key(unhashed);
+    return key.get_key();
 }
 
 
