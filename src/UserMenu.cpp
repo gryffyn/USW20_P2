@@ -88,6 +88,7 @@ void login_menu() {
             std::cout << std::endl << endval(ST_INVIS);
             std::cout << setval(FG_RED, "🗙") << " Username not found. Please try again.\n";
         } else {
+            pass_success = true;
             std::cout << std::endl << endval(ST_INVIS);
             std::string name = LoginTools::get_name(username);
             std::cout << "Welcome, " << name.substr(0, name.find(' ')) << ".";
