@@ -44,54 +44,85 @@ std::string setval(Code code, const std::string& input) {
 
 using namespace Color;
 
-namespace LoginTools {
+namespace Login {
 
-bool check_user(const std::string& username) {
-    ObjStore db;
-    mariadb::result_set_ref result = db.select("SELECT EXISTS(SELECT * FROM Users WHERE user = '" + username + "');");
-    return (bool)result->get_unsigned8(0);
+std::pair<bool, int> check_user(ObjStore& db, const std::string& username) {
+    std::pair<bool, int> retval;
+    try {
+        mariadb::result_set_ref user_result = db.select("SELECT user_id, user FROM Users WHERE user = '" + username + "';");
+
+        mariadb::result_set_ref TEST = db.select("SELECT * FROM Users;");
+        std::cout << std::endl << TEST->next() << std::endl;
+
+        std::cout << std::endl << "SELECT user_id, user FROM Users WHERE user = '" + username + "';";
+        if (username == user_result->get_string(1)) {
+            retval.first = true; retval.second = user_result->get_unsigned32(0);
+        }
+    } catch (std::out_of_range& e){
+        std::cout << e.what();
+        retval.second = -1;
+    }
+    return retval;
 }
 
-bool login(const std::string& username, std::string pass) {
-    ObjStore db;
-    mariadb::result_set_ref result = db.select("SELECT pwhash FROM Users WHERE user = '" + username + "');");
-    std::string pwhash = result->get_string(1);
-    return Key::verify_key(pwhash, std::move(pass));
+bool login(ObjStore& db, const int& user_id, std::string pass) {
+    bool valid = false;
+    mariadb::result_set_ref pass_result;
+    std::stringstream sql;
+    sql << "SELECT user_id, pwhash FROM Users WHERE user_id = " << user_id << ";";
+    std::cout << std::endl << sql.str();
+    try {
+        pass_result = db.select(sql.str());
+        std::string pwhash = pass_result->get_string(1);
+        std::cout << "\nHASH = " << pwhash;
+        valid = Key::verify_key(pwhash, pass);
+        std::cout << std::endl << valid;
+    } catch (std::out_of_range& e) {
+        std::cout << e.what();
+    }
+    return valid;
 }
 
-std::string get_name(const std::string& username){
-    ObjStore db;
-    mariadb::result_set_ref result = db.select("SELECT name FROM Users WHERE user = '" + username + "');");
-    return result->get_string(0);
+std::string get_name(ObjStore& db, const int& user_id){
+    std::stringstream sql;
+    sql << "SELECT user_id, name FROM Users WHERE user_id = " << user_id << ";";
+    mariadb::result_set_ref result = db.select(sql.str());
+    return result->get_string(1);
 }
 
-}
-
-void login_menu() {
+void login_menu(ObjStore& db) {
     std::string username;
+    int user_id = 0;
     bool user_success = false, pass_success = false;
     std::cout << "--------------------------------" << std::endl << "Welcome to the USW Cyber Lab.\n";
     while (!user_success) {
         std::cout << setval(ST_BOLD, "Username: ");
         std::getline(std::cin, username);
-        if (!LoginTools::check_user(username)) {
+        std::pair<bool, int> check = check_user(db, username);
+        if (!check.first) {
             std::cout << std::endl << setval(FG_RED, "🗙") << " Username not found. Please try again.\n";
         } else {
+            user_id = check.second;
             user_success = true;
+            while (!pass_success) {
+                std::cout << setval(ST_BOLD, "Password: ") << startval(ST_INVIS);
+                std::string password;
+                std::getline(std::cin, password);
+                if (!login(db, user_id, password)) {
+                    std::cout << std::endl << endval(ST_INVIS);
+                    std::cout << setval(FG_RED, "🗙") << " Password incorrect. Please try again.\n";
+                } else {
+                    pass_success = true;
+                    std::cout << std::endl << endval(ST_INVIS);
+                    std::string name = get_name(db, user_id);
+                    std::cout << "Welcome, " << name.substr(0, name.find(' ')) << ".";
+                }
+            }
         }
     }
-    while (!pass_success) {
-        std::cout << setval(ST_BOLD, "Password: ") << startval(ST_INVIS);
-        std::string password;
-        std::getline(std::cin, password);
-        if (!LoginTools::login(username, password)) {
-            std::cout << std::endl << endval(ST_INVIS);
-            std::cout << setval(FG_RED, "🗙") << " Username not found. Please try again.\n";
-        } else {
-            pass_success = true;
-            std::cout << std::endl << endval(ST_INVIS);
-            std::string name = LoginTools::get_name(username);
-            std::cout << "Welcome, " << name.substr(0, name.find(' ')) << ".";
-        }
-    }
+
 }
+
+}
+
+

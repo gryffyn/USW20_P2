@@ -13,14 +13,14 @@ using namespace mariadb;
 Student::Student(ObjStore& u_db, const std::string& name, const std::string& user, std::string unhashed)
     : User(u_db, name, user, std::move(unhashed)) {
     db = u_db;
-    db.execute("INSERT INTO Students(user_id)")
+    db.execute("INSERT INTO Students(user_id) VALUES ((SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1))");
 }
 
 Student::Student(ObjStore& u_db, const std::string& name, const std::string& user, std::string unhashed, std::string data)
     : User(u_db, name, user, std::move(unhashed)) {
     db = u_db;
     db.execute("INSERT INTO Students(user_id, data) "
-               "VALUES (SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1"
+               "VALUES ((SELECT user_id FROM Users ORDER BY user_id DESC LIMIT 1)"
                ", '" + data + "');");
 }
 
@@ -34,6 +34,6 @@ std::string Student::get_data(unsigned int userid) {
     std::stringstream ss;
     ss << "SELECT user_id, data FROM Students WHERE user_id = '" << userid << "';";
     result_set_ref result = db.select(ss.str());
-    std::string data = result->get_string(1);
+    return result->get_string(1);
 }
 

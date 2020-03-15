@@ -16,7 +16,7 @@ bool ObjStore::init_db() {
     conn->execute("CREATE TABLE IF NOT EXISTS Users ("
                   "user_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                   "name TEXT NOT NULL,"
-                  "user TEXT NOT NULL,"
+                  "user TEXT NOT NULL UNIQUE,"
                   "pwhash TEXT NOT NULL);");
     // creates Student table
     conn->execute("CREATE TABLE IF NOT EXISTS Students ("
