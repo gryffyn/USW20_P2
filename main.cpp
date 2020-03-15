@@ -8,43 +8,21 @@
 #include <iostream>
 #include <vector>
 
-#include "Log.h"
-#include "User.h"
+#include "Key.hpp"
+#include "Log.hpp"
+#include "ObjStore.hpp"
+#include "User.hpp"
+#include "Student.hpp"
 #include "cxxopts.hpp"
-#include "Key.h"
-#include "ObjStore.h"
+#include "UserMenu.hpp"
 
 bool verbose;
-
-#include <ostream>
-namespace Color {
-    enum Code {
-        FG_RED      = 31,
-        FG_GREEN    = 32,
-        FG_BLUE     = 34,
-        FG_DEFAULT  = 39,
-        ST_INVIS    = 8,
-        ST_DEF      = 0
-    };
-    std::string setval(Code code, const std::string& input) {
-        std::stringstream ss;
-        ss << "\033[" << code << "m" << input << "\033[";
-        if (code < 30) { ss << "0m"; }
-        else { ss << "39m"; }
-        return ss.str();
-    }
-}
-
-void create_user() {
-    std::cout << "--------------------------------" << std::endl << "Welcome to the USW Cyber Lab.\n";
-    std::cout << "Username: ";
-
-}
-
 
 int main(int argc, char **argv) {
     ObjStore db;
     db.init_db();
+    // Log::write(Log::INFO, "Initializing sodium...");
+    static_cast<void>(sodium_init());
     cxxopts::Options options("USWCyberLab", "USW Cyber Lab file storage program");
     options.add_options()("v,verbose", "Verbose output - shows log levels INFO and WARN")("h,help", "Prints help");
     auto result = options.parse(argc, argv);
@@ -53,20 +31,35 @@ int main(int argc, char **argv) {
         std::cout << options.help() << std::endl;
         exit(0);
     }
-    // Log::write(Log::INFO, "Initializing sodium...");
-    static_cast<void>(sodium_init());
-    // Log::write(Log::INFO, "Sodium initialized.");
-    Key key("hello");
-    std::cout << key.get_key();
-    std::string str = key.get_key();
-    if (Key::verify_key(str, "hello")) { std::cout << "\n" << Color::setval(Color::FG_GREEN, "✔") << " Password verified!"; }
-    std::string str_sub = str.substr(0, 20);
-    std::cout << std::endl << str_sub;
-    if (!(Key::verify_key(str_sub, "hello"))) { std::cout << "\n" << Color::setval(Color::FG_RED, "✘") << " Password did not verify."; }
 
     //TODO everything. literally everything
 
-    User user(23, "Evan Penner", "gryffyn", "password");
+    // std::cout << "Adding user...";
+    // User user(db, "Evan Penner", "gryffyn", "THISISaverysecurepassword23123?!");
+    // std::cout << std::endl << "Result = " << user.creation_result << std::endl;
+
+    Login::login_menu(db);
+
+    /*
+    std::string sql = "SELECT * FROM Users;";
+    std::cout << std::endl << sql;
+    mariadb::result_set_ref m_result = db.select(sql);
+    std::cout << std::endl << m_result->next();
+    // std::cout << std::endl << pwhash;
+    std::cout << std::endl << m_result->get_string(3);
+    std::cout << std::endl << Key::verify_key(m_result->get_string(3), "THISISaverysecurepassword23123?!");
+    std::string username = "gryffyn";
+    std::string sql2 = "SELECT user_id, user FROM Users WHERE user = '" + username + "';";
+    mariadb::result_set_ref m2_result = db.select(sql2);
+    std::cout << "\nSQL2 - command:\n" << sql2 << "\nExists: " << m2_result->next();
+    std::cout << "\nstring = " << m2_result->get_string(1) << "\nINIT LOGIN MENU...";
+
+    std::string sql3 = "SELECT user_id, user FROM Users WHERE user = '" + username + "';";
+    mariadb::result_set_ref user_result = db.select(sql3);
+    user_result->next();
+    std::cout << std::endl << user_result->get_string(1);
+    */
+
     db.finalize();
     return 0;
 }

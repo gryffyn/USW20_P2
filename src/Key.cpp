@@ -3,7 +3,7 @@
 // All components are licensed under the MIT License.
 // A copy is included in LICENSE
 
-#include "Key.h"
+#include "Key.hpp"
 
 #include <sodium.h>
 
@@ -18,6 +18,8 @@ class Key::pass_exception : public std::exception {
     [[nodiscard]] const char* what() const noexcept override { return "Password is invalid length/strength."; }
 };
 
+bool verify_key(std::string pass);
+bool verify_key(std::string pass);
 enum passStrength{Strong, Medium, Weak, Invalid}; // emum containing options for password strength
 enum chartype{upper, digit, symbol};
 
@@ -54,7 +56,7 @@ passStrength CheckPasswordStrength(std::string& password){ // checks pw strength
 Key::Key(std::string pass) {
     // locks memory from the mem address of the start of pass to the end of the str
     sodium_mlock((void*)pass.c_str(), pass.size());
-    if (!(CheckPasswordStrength(pass) == Invalid)){
+    if ((CheckPasswordStrength(pass) == Invalid)){
         throw pass_exception();
     } else {
         // creates char[] of required length for the hash
@@ -65,7 +67,7 @@ Key::Key(std::string pass) {
             throw hash_exception();
         }
         // unlocks and zeroes the memory
-        sodium_munlock((void*)pass.c_str(), pass.size());
+        // sodium_munlock((void*)pass.c_str(), pass.size());
         // dumps hash into string and returns it
         std::stringstream ss;
         ss << hashed_password;
@@ -82,6 +84,10 @@ bool Key::verify_key(std::string key, std::string pass) {
     sodium_munlock((void*)pass.c_str(), pass.size());
     // crypto_pwhash_str_verify returns 0 if correct, so return value needs to be inverted after cast to bool
     return !ret_val;
+}
+
+bool Key::verify_key(std::string pass) {
+    return verify_key(finalkey, pass);
 }
 
 std::string Key::get_key() { return finalkey; }
