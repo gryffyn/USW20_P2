@@ -50,13 +50,9 @@ std::pair<bool, int> check_user(ObjStore& db, const std::string& username) {
     std::pair<bool, int> retval;
     try {
         mariadb::result_set_ref user_result = db.select("SELECT user_id, user FROM Users WHERE user = '" + username + "';");
-
-        mariadb::result_set_ref TEST = db.select("SELECT * FROM Users;");
-        std::cout << std::endl << TEST->next() << std::endl;
-
-        std::cout << std::endl << "SELECT user_id, user FROM Users WHERE user = '" + username + "';";
+        user_result->next();
         if (username == user_result->get_string(1)) {
-            retval.first = true; retval.second = user_result->get_unsigned32(0);
+            retval.first = true; retval.second = user_result->get_unsigned16(0);
         }
     } catch (std::out_of_range& e){
         std::cout << e.what();
@@ -70,23 +66,22 @@ bool login(ObjStore& db, const int& user_id, std::string pass) {
     mariadb::result_set_ref pass_result;
     std::stringstream sql;
     sql << "SELECT user_id, pwhash FROM Users WHERE user_id = " << user_id << ";";
-    std::cout << std::endl << sql.str();
     try {
         pass_result = db.select(sql.str());
+        pass_result->next();
         std::string pwhash = pass_result->get_string(1);
-        std::cout << "\nHASH = " << pwhash;
         valid = Key::verify_key(pwhash, pass);
-        std::cout << std::endl << valid;
     } catch (std::out_of_range& e) {
         std::cout << e.what();
     }
     return valid;
 }
 
-std::string get_name(ObjStore& db, const int& user_id){
+std::string get_name(ObjStore db, const int& user_id){
     std::stringstream sql;
     sql << "SELECT user_id, name FROM Users WHERE user_id = " << user_id << ";";
     mariadb::result_set_ref result = db.select(sql.str());
+    result->next();
     return result->get_string(1);
 }
 
@@ -120,9 +115,6 @@ void login_menu(ObjStore& db) {
             }
         }
     }
-
 }
 
 }
-
-
