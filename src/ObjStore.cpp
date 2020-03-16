@@ -12,7 +12,7 @@ using namespace mariadb;
 using namespace YAML;
 
 void ObjStore::load_config() {
-    Node config = LoadFile("config.yaml");
+    Node config = LoadFile("config.yml");
     dbhost = config["host"].as<std::string>();
     dbport = config["port"].as<int>();
     dbname = config["name"].as<std::string>();

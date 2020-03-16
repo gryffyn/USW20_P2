@@ -205,7 +205,7 @@ std::string set_user_type(const int& choice) {
     if (choice == 1) { return "Student"; }
     else if (choice == 2) { return "Lecturer"; }
     else if (choice == 3) { return "Admin"; }
-    else { std::cout << "Invalid choice."; }
+    else { std::cout << "Invalid choice."; return ""; }
 }
 
 void create_user(ObjStore& db) {
