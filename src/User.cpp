@@ -23,5 +23,3 @@ std::string User::hashpw(std::string& unhashed) {
     Key key(unhashed);
     return key.get_key();
 }
-
-

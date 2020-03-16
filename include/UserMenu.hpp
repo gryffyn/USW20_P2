@@ -12,10 +12,4 @@ namespace Login {
 void login_menu(ObjStore& db);
 }
 
-class UserMenu {
-   public:
-
-   protected:
-};
-
 #endif  // USW20_P2_USERMENU_HPP

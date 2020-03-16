@@ -18,8 +18,6 @@ class Key::pass_exception : public std::exception {
     [[nodiscard]] const char* what() const noexcept override { return "Password is invalid length/strength."; }
 };
 
-bool verify_key(std::string pass);
-bool verify_key(std::string pass);
 enum passStrength{Strong, Medium, Weak, Invalid}; // emum containing options for password strength
 enum chartype{upper, digit, symbol};
 

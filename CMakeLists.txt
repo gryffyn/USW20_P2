@@ -12,17 +12,18 @@ add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.hpp src/S
 find_package(Boost)
 find_package(SQLite3)
 find_package(yaml-cpp)
-find_package(mariadbclientpp)
+# find_package(mariadbclientpp)
 
 # include
 include_directories(include/sodium)
 include_directories(include)
 include_directories(/usr/include/mysql)
 include_directories(/usr/include/mysql/mysql)
+include_directories(include/mariadbpp)
 
 # target linking
 target_link_libraries(${PROJECT_NAME} sodium)
 target_link_libraries(${PROJECT_NAME} sqlite3)
-target_link_libraries(${PROJECT_NAME} mariadbclientpp::mariadbclientpp)
+target_link_libraries(${PROJECT_NAME} mariadbclientpp)
 
 
