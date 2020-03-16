@@ -18,6 +18,7 @@
 
 bool verbose;
 
+
 int main(int argc, char **argv) {
     ObjStore db;
     db.init_db();

@@ -6,11 +6,30 @@
 
 #include <mariadb++/connection.hpp>
 #include <string>
+#include <yaml-cpp/yaml.h>
 
 using namespace mariadb;
+using namespace YAML;
+
+void ObjStore::load_config() {
+    Node config = LoadFile("config.yaml");
+    dbhost = config["host"].as<std::string>();
+    dbport = config["port"].as<int>();
+    dbname = config["name"].as<std::string>();
+    dbuser = config["user"].as<std::string>();
+    dbpasswd = config["password"].as<std::string>();
+}
+
+void ObjStore::create_connection() {
+    acc = mariadb::account::create(dbhost, dbuser, dbpasswd, dbname, dbport, "");
+    acc->set_auto_commit(true);
+    // account->set_connect_option(, 10);
+    conn = connection::create(acc);
+}
 
 bool ObjStore::init_db() {
     bool status = false;
+    load_config();
     create_connection();
     // creates Users table
     conn->execute("CREATE TABLE IF NOT EXISTS Users ("
@@ -25,26 +44,19 @@ bool ObjStore::init_db() {
                   "last_notif TIMESTAMP,"
                   "CONSTRAINT fk_s_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
-    // creates Admin table
+    // creates Lecturer table
     conn->execute("CREATE TABLE IF NOT EXISTS Lecturers ("
                   "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
                   "data MEDIUMTEXT,"
                   "CONSTRAINT fk_l_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
-    // creates Lectuer table
+    // creates Admin table
     conn->execute("CREATE TABLE IF NOT EXISTS Admins ("
                   "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
                   "CONSTRAINT fk_a_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
     // creates
     return status;
-}
-
-void ObjStore::create_connection() {
-    acc = mariadb::account::create("localhost", "uswp20", "USWP20WRITEDB", "uswp20v2", 3306, "");
-    acc->set_auto_commit(true);
-    // account->set_connect_option(, 10);
-    conn = connection::create(acc);
 }
 
 void ObjStore::insert(const std::string& str) {
@@ -62,4 +74,3 @@ result_set_ref ObjStore::select(const std::string& str) {
 }
 
 void ObjStore::finalize() { conn->disconnect(); }
-

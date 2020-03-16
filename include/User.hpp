@@ -7,17 +7,17 @@
 
 #include <mariadb++/connection.hpp>
 #include <string>
+#include <vector>
 
 #include "Key.hpp"
 #include "ObjStore.hpp"
 
 class User {
    public:
-    explicit User(ObjStore& db, const std::string& name, const std::string& user, std::string unhashed);
+    explicit User(ObjStore& db, const std::string& name, const std::string& user, std::string pwhash);
     mariadb::u64 creation_result{};
 
    protected:
-    static std::string hashpw(std::string& unhashed);
     ObjStore db;
 };
 

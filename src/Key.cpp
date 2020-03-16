@@ -9,13 +9,10 @@
 
 #include <sstream>
 #include <string>
+#include <utility>
 
 class hash_exception : public std::exception {
     [[nodiscard]] const char* what() const noexcept override { return "Hash func ran out of memory"; }
-};
-
-class Key::pass_exception : public std::exception {
-    [[nodiscard]] const char* what() const noexcept override { return "Password is invalid length/strength."; }
 };
 
 enum passStrength{Strong, Medium, Weak, Invalid}; // emum containing options for password strength
@@ -51,10 +48,14 @@ passStrength CheckPasswordStrength(std::string& password){ // checks pw strength
     }
 }
 
-Key::Key(std::string pass) {
+Key::Key() = default;
+
+void Key::create_key(std::string pass) {
     // locks memory from the mem address of the start of pass to the end of the str
     sodium_mlock((void*)pass.c_str(), pass.size());
-    if ((CheckPasswordStrength(pass) == Invalid)){
+    passStrength strength = CheckPasswordStrength(pass);
+    for (char c : pass) { if (c == '\\') { throw pass_exception(); }}
+    if (strength == Invalid){
         throw pass_exception();
     } else {
         // creates char[] of required length for the hash
@@ -71,6 +72,10 @@ Key::Key(std::string pass) {
         ss << hashed_password;
         finalkey = ss.str();
     }
+}
+
+Key::Key(std::string pass) {
+    create_key(std::move(pass));
 }
 
 bool Key::verify_key(std::string key, std::string pass) {

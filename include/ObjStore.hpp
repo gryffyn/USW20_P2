@@ -22,6 +22,12 @@ class ObjStore {
     mariadb::account_ref acc{};
     mariadb::connection_ref conn{};
     void create_connection();
+    std::string dbname;
+    std::string dbpasswd;
+    std::string dbuser;
+    std::string dbhost;
+    int dbport;
+    void load_config();
 };
 
 #endif  // USW20_P2_OBJSTORE_HPP
