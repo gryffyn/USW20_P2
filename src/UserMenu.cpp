@@ -93,6 +93,7 @@ namespace Login {
 // checks if user exists and if it does, returns true and the user_id. If not, returns false and -1
 std::pair<bool, int> check_user(ObjStore& db, const std::string& username) {
     std::pair<bool, int> retval;
+    retval.first = false;
     try {
         mariadb::result_set_ref user_result =
             db.select("SELECT user_id, user FROM Users WHERE user = '" + username + "';");
@@ -132,11 +133,12 @@ std::string get_name(ObjStore& db, const int& user_id) {
     return result->get_string(1);
 }
 
-int login_menu(ObjStore& db) {
+std::pair<std::string, int> login_menu(ObjStore& db) {
     clr();
     std::string username;
     int user_id = 0;
     bool user_success = false, pass_success = false;
+    std::string password;
     std::cout << make_box("Welcome to the USW Cyber Lab.");
     while (!user_success) {
         std::cout << setval(ST_BOLD, "Username: ");
@@ -150,7 +152,6 @@ int login_menu(ObjStore& db) {
             user_success = true;
             while (!pass_success) {
                 std::cout << setval(ST_BOLD, "Password: ");
-                std::string password;
                 std::getline(std::cin, password);
                 if (!login(db, user_id, password)) {
                     std::cout << std::endl;
@@ -166,7 +167,10 @@ int login_menu(ObjStore& db) {
             }
         }
     }
-    return user_id;
+    std::pair<std::string, int> final;
+    final.first = password;
+    final.second = user_id;
+    return final;
 }
 
 }  // namespace Login
@@ -220,7 +224,16 @@ void create_user(ObjStore& db) {
     std::string username, name, password, typechoice;
     std::vector<int> typechoices;
     // get user info
-    username = getstring(setval(ST_BOLD, "Username: "));
+    bool user_success = false;
+    while (!user_success) {
+        username = getstring(setval(ST_BOLD, "Username: "));
+        std::pair<bool, int> user_exists = Login::check_user(db, username);
+        if (user_exists.first) {
+            user_success = true;
+        } else {
+            std::cout << "Username has already been chosen. Please choose another username.";
+        }
+    }
     name = getstring(setval(ST_BOLD, "Name: "));
     Key pwhash;
     bool pass_success{};
@@ -281,7 +294,7 @@ void delete_user(ObjStore& db) {
     }
 }
 
-void show_data(ObjStore& db, const int& user_id, const std::string& user_type) {
+void show_data(ObjStore& db, const int& user_id, const std::string& user_type, std::string password) {
     std::stringstream sql;
     sql << "SELECT data FROM " << user_type << "s WHERE user_id = " << user_id << ";";
     std::string sql_s(sql.str());
@@ -289,12 +302,14 @@ void show_data(ObjStore& db, const int& user_id, const std::string& user_type) {
     result->next();
     std::cout << make_box("Data");
     std::string data = result->get_string(0);
-    if (data == "NULL") {
+    if (data.empty()) {
         std::cout << setval(FG_RED, "🗙") << "No data found.";
-    } else { std::cout << data; }
+    } else {
+        std::cout << DataTools::get_data_xor(db, user_id, std::move(password));
+    }
 }
 
-void edit_data(ObjStore& db, const int& user_id, const std::string& user_type) {
+void edit_data(ObjStore& db, const int& user_id, const std::string& user_type, std::string password) {
     std::cout << make_box("Data");
     std::stringstream sql;
     std::string data;
@@ -308,12 +323,15 @@ void edit_data(ObjStore& db, const int& user_id, const std::string& user_type) {
     std::getline(std::cin, choice);
     choice_i = stoi(choice);
     if (choice_i == 1) {
-        sql << "UPDATE " << user_type << "s SET data = '" << data
-            << "' WHERE user_id = " << user_id << ";";
+        data = getstring("Input data: ");
+        DataTools::save_data_xor(db, user_id, data, std::move(password));
     } else if (choice_i == 2) {
-        sql << "UPDATE " << user_type << "s SET data = CONCAT((SELECT data FROM "
-            << " Lecturers WHERE user_id = 14), '" << data
-            << "') WHERE user_id = " << user_id << ";";
+        data = getstring("Data will be added to your existing data.\nInput data: ");
+        std::getline(std::cin, data);
+        std::string total_data = DataTools::get_data_xor(db, user_id, std::move(password)) + data;
+        sql << "UPDATE " << user_type << "s SET data = '"
+            << DataTools::return_data_xor(db, user_id, total_data, std::move(password))
+            << "' WHERE user_id = " << user_id << ";";
         db.execute(sql.str());
     }
 }
@@ -417,7 +435,7 @@ bool menu_admin(ObjStore& db, int& count) {
     } else { return true; }
 }
 
-bool menu_student(ObjStore& db, int& count, const int& user_id, const std::string& student) {
+bool menu_student(ObjStore& db, int& count, const int& user_id, const std::string& student, std::string password) {
     std::string choice;
     int choice_i = 0;
     std::cout << setval(ST_BOLD, "1. ") << "Show data\n";
@@ -430,20 +448,21 @@ bool menu_student(ObjStore& db, int& count, const int& user_id, const std::strin
     choice_i = stoi(choice);
     if (choice_i == 1) {
         clr();
-        show_data(db, user_id, student);
-        if (!back_or_exit()) { return true; } else { clr(); }
+        show_data(db, user_id, student, password);
+        if (!back_or_exit()) { return true; } else { clr(); return false;}
     } else if (choice_i == 2) {
         clr();
-        edit_data(db, user_id, student);
-        if (!back_or_exit()) { return true; } else { clr(); }
+        edit_data(db, user_id, student, password);
+        if (!back_or_exit()) { return true; } else { clr(); return false; }
     } else if (choice_i == 3) {
         clr();
         show_announcements(db, user_id);
-        if (!back_or_exit()) { return true; } else { clr(); }
+        clr();
+        return false;
     } else { return true; }
 }
 
-bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::string& student) {
+bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::string& lecturer, std::string password) {
     std::string choice;
     int choice_i = 0;
     std::cout << setval(ST_BOLD, "1. ") << "Show data\n";
@@ -457,16 +476,16 @@ bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::stri
     choice_i = stoi(choice);
     if (choice_i == 1) {
         clr();
-        show_data(db, user_id, student);
-        if (!back_or_exit()) { return true; } else { clr(); }
+        show_data(db, user_id, lecturer, password);
+        if (!back_or_exit()) { return true; } else { clr(); return false; }
     } else if (choice_i == 2) {
         clr();
-        edit_data(db, user_id, student);
-        if (!back_or_exit()) { return true; } else { clr(); }
+        edit_data(db, user_id, lecturer, password);
+        if (!back_or_exit()) { return true; } else { clr(); return false; }
     } else { return true; }
 }
 
-void show_menu(ObjStore& db, const int& user_id) {
+void show_menu(ObjStore& db, const int& user_id, std::string password) {
     std::vector<std::string> user_type = check_user_type(db, user_id);
     std::cout << std::endl << make_box("Menu Options:") << std::endl;
     bool exit = false;
@@ -475,13 +494,12 @@ void show_menu(ObjStore& db, const int& user_id) {
         if (std::find(user_type.begin(), user_type.end(), "Admin") != user_type.end()) {
             exit = menu_admin(db, count);
         } else if (std::find(user_type.begin(), user_type.end(), "Lecturer") != user_type.end()) {
-            exit = menu_lecturer(db, count, user_id, "Lecturer");
+            exit = menu_lecturer(db, count, user_id, "Lecturer", password);
         } else if (std::find(user_type.begin(), user_type.end(), "Student") != user_type.end()) {
-            exit = menu_student(db, count, user_id, "Student");
+            exit = menu_student(db, count, user_id, "Student", password);
         }
         ++count;
     }
-
 }
 
 }  // namespace UserMenu

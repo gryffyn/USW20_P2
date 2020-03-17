@@ -74,6 +74,7 @@ void Key::create_key(std::string pass) {
     }
 }
 
+
 Key::Key(std::string pass) {
     create_key(std::move(pass));
 }
@@ -94,3 +95,19 @@ bool Key::verify_key(std::string pass) {
 }
 
 std::string Key::get_key() { return finalkey; }
+
+namespace KeyDer {
+
+std::string create_derived(std::string pwhash, std::string password) {
+    std::stringstream pass_half_s;
+    pass_half_s << password;
+    std::string final;
+    if (pass_half_s.str().length() < 16) {
+        while (pass_half_s.str().length() < 16) {
+            pass_half_s << "0";
+        }
+    }
+    return (pwhash.substr(pwhash.length()-16, pwhash.length()) + pass_half_s.str());
+}
+
+} // namespace KeyDer

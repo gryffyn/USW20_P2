@@ -40,14 +40,14 @@ bool ObjStore::init_db() {
     // creates Student table
     conn->execute("CREATE TABLE IF NOT EXISTS Students ("
                   "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
-                  "data MEDIUMTEXT,"
+                  "data MEDIUMBLOB,"
                   "last_notif TIMESTAMP,"
                   "CONSTRAINT fk_s_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
     // creates Lecturer table
     conn->execute("CREATE TABLE IF NOT EXISTS Lecturers ("
                   "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
-                  "data MEDIUMTEXT,"
+                  "data MEDIUMBLOB,"
                   "CONSTRAINT fk_l_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
                   "ON DELETE CASCADE);");
     // creates Admin table

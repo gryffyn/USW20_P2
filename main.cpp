@@ -39,9 +39,8 @@ int main(int argc, char **argv) {
     // std::cout << "Adding user...";
     // User user(db, "Evan Penner", "gryffyn", "THISISaverysecurepassword23123?!");
     // std::cout << std::endl << "Result = " << user.creation_result << std::endl;
-
-    int user_id = Login::login_menu(db);
-    UserMenu::show_menu(db, user_id);
+    std::pair<std::string, int> loginuser = Login::login_menu(db);
+    UserMenu::show_menu(db, loginuser.second, loginuser.first);
 
     /*
     std::string sql = "SELECT * FROM Users;";
