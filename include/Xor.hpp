@@ -3,7 +3,7 @@
 //
 
 #ifndef USW20_P2_XOR_HPP
-#define USW20_P2_XOR_HP
+#define USW20_P2_XOR_HPP
 
 #include <bitset>
 #include <fstream>

@@ -344,7 +344,7 @@ bool back_or_exit() {
     return (c == '9');
 }
 
-void show_announcements(ObjStore& db, const int& user_id) {
+void show_announcements(ObjStore& db, const int& user_id, std::string user_type) {
     std::cout << make_box("Announcements");
     std::stringstream sql, sql2;
     std::string data;
@@ -360,21 +360,25 @@ void show_announcements(ObjStore& db, const int& user_id) {
     if (choice_i == 1) {
         clr();
         std::cout << make_box("Announcements");
-        sql << "SELECT last_notif FROM Students WHERE user_id = " << user_id << ";";
+        sql << "SELECT last_notif FROM " << user_type << "s WHERE user_id = " << user_id << ";";
         mariadb::result_set_ref result = db.select(sql.str());
         result->next();
         mariadb::date_time last = result->get_date_time(0);
         sql2 << "SELECT * FROM Announcements WHERE ann_time >= '" << last << "';";
         mariadb::result_set_ref result2 = db.select(sql2.str());
         while (result2->next()) {
-            std::stringstream time;
+            std::stringstream time, sql3;
+            sql3 << "SELECT name FROM Users WHERE user_id = " << result2->get_string("ann_author") << ";";
+            mariadb::result_set_ref result3 = db.select(sql3.str());
+            result3->next();
             time << result2->get_date_time("ann_time");
-            std::cout << std::endl << setval(ST_BOLD, result2->get_string("ann_title")) << std::endl
+            std::cout << std::endl << setval(ST_BOLD, result2->get_string("ann_title"))
+                      << std::endl << result3->get_string("name") << std::endl
                       << setval(ST_UNDER, time.str()) << std::endl
                       << result->get_string("ann_text");
         }
         std::stringstream newtime;
-        newtime << "UPDATE Students SET last_notif = '" << mariadb::date_time::now_utc() << "' WHERE user_id = "
+        newtime << "UPDATE " << user_type << "s SET last_notif = '" << mariadb::date_time::now_utc() << "' WHERE user_id = "
                 << user_id << ";";
         db.insert(newtime.str());
         std::cout << std::endl << "\nPress enter to continue...";
@@ -395,11 +399,17 @@ void show_announcements(ObjStore& db, const int& user_id) {
             mariadb::result_set_ref result = db.select(ss.str());
             result->next();
             clr();
+            std::stringstream sql3;
+            sql3 << "SELECT name FROM Users WHERE user_id = " << result->get_string("ann_author") << ";";
+            mariadb::result_set_ref result3 = db.select(sql3.str());
+            result3->next();
             std::cout << make_box("Announcement");
             std::stringstream time2;
             time2 << result->get_date_time("ann_time");
-            std::cout << setval(ST_BOLD, result->get_string("ann_title")) << std::endl << setval(ST_UNDER, time2.str())
-                      << std::endl << std::endl << result->get_string("ann_text");
+            std::cout << std::endl << setval(ST_BOLD, result->get_string("ann_title"))
+                      << std::endl << result3->get_string("name") << std::endl
+                      << setval(ST_UNDER, time2.str()) << std::endl
+                      << result->get_string("ann_text");
             std::cout << std::endl << "\nPress enter to continue...";
             std::cin.ignore();
         } catch (std::out_of_range& e) {
@@ -410,13 +420,25 @@ void show_announcements(ObjStore& db, const int& user_id) {
     }
 }
 
-bool menu_admin(ObjStore& db, int& count) {
+void create_announcement(ObjStore& db, const int& user_id) {
+    make_box("Create Announcement");
+    std::string title,text;
+    title = getstring("Title: ");
+    text = getstring("Text: ");
+    Announcement ann(db, user_id, title, text);
+    std::cout << std::endl << "Announcement created.\nPress enter to continue...";
+    std::cin.ignore();
+}
+
+bool menu_admin(ObjStore& db, int& count, const int& user_id, std::string user_type) {
     std::string choice;
     int choice_i = 0;
     std::cout << setval(ST_BOLD, "1. ") << "List Users\n";
     std::cout << setval(ST_BOLD, "2. ") << "Create User\n";
     std::cout << setval(ST_BOLD, "3. ") << "Delete User\n";
-    std::cout << setval(ST_BOLD, "4. ") << "Exit\n";
+    std::cout << setval(ST_BOLD, "4. ") << "Show announcements\n";
+    std::cout << setval(ST_BOLD, "5. ") << "Create announcement\n";
+    std::cout << setval(ST_BOLD, "6. ") << "Exit\n";
     std::cout << "\nSelect action: ";
     if (count != 0) { std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n'); }
     std::getline(std::cin, choice);
@@ -433,7 +455,18 @@ bool menu_admin(ObjStore& db, int& count) {
         clr();
         delete_user(db);
         if (!back_or_exit()) { return true; } else { clr(); return false; }
-    } else { return true; }
+    } else if (choice_i == 4) {
+        clr();
+        show_announcements(db, user_id, user_type);
+        clr();
+        return false;
+    } else if (choice_i == 5) {
+        clr();
+        create_announcement(db, user_id);
+        clr();
+        return false;
+    }
+    else { return true; }
 }
 
 bool menu_student(ObjStore& db, int& count, const int& user_id, const std::string& student, std::string password) {
@@ -457,7 +490,7 @@ bool menu_student(ObjStore& db, int& count, const int& user_id, const std::strin
         if (!back_or_exit()) { return true; } else { clr(); return false; }
     } else if (choice_i == 3) {
         clr();
-        show_announcements(db, user_id);
+        show_announcements(db, user_id, student);
         clr();
         return false;
     } else { return true; }
@@ -483,7 +516,18 @@ bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::stri
         clr();
         edit_data(db, user_id, lecturer, password);
         if (!back_or_exit()) { return true; } else { clr(); return false; }
-    } else { return true; }
+    } else if (choice_i == 3) {
+        clr();
+        show_announcements(db, user_id, lecturer);
+        clr();
+        return false;
+    } else if (choice_i == 4) {
+        clr();
+        create_announcement(db, user_id);
+        clr();
+        return false;
+    }
+    else { return true; }
 }
 
 void show_menu(ObjStore& db, const int& user_id, std::string password) {
@@ -493,7 +537,7 @@ void show_menu(ObjStore& db, const int& user_id, std::string password) {
     int count = 0;
     while (!exit) {
         if (std::find(user_type.begin(), user_type.end(), "Admin") != user_type.end()) {
-            exit = menu_admin(db, count);
+            exit = menu_admin(db, count, user_id, "Admin");
         } else if (std::find(user_type.begin(), user_type.end(), "Lecturer") != user_type.end()) {
             exit = menu_lecturer(db, count, user_id, "Lecturer", password);
         } else if (std::find(user_type.begin(), user_type.end(), "Student") != user_type.end()) {

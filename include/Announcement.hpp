@@ -9,7 +9,7 @@
 
 class Announcement {
    public:
-    explicit Announcement(ObjStore& u_db, std::string i_title, std::string i_text);
+    explicit Announcement(ObjStore& u_db, const int& id, std::string i_title, std::string i_text);
 
    protected:
     ObjStore db;
