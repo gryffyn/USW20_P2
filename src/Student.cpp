@@ -9,8 +9,8 @@
 #include <utility>
 #include <string>
 
-#include "Xor.hpp"
 #include "ObjStore.hpp"
+#include "DataTools.hpp"
 
 using namespace mariadb;
 
@@ -30,6 +30,6 @@ Student::Student(ObjStore& u_db, const std::string& name, const std::string& use
     std::stringstream ss;
     ss << "INSERT INTO Students(user_id) VALUES (" << user_id << ");";
     db.execute(ss.str());
-    DataTools::save_data(db, user_id, data, password);
+    DataTools::save_data(db, user_id, "Student", data, password);
 }
 
