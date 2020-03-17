@@ -7,6 +7,7 @@
 #include <mhash.h>
 
 #include <Admin.hpp>
+#include <DataTools.hpp>
 #include <Lecturer.hpp>
 #include <Student.hpp>
 #include <User.hpp>
@@ -305,7 +306,7 @@ void show_data(ObjStore& db, const int& user_id, const std::string& user_type, s
     if (data.empty()) {
         std::cout << setval(FG_RED, "🗙") << "No data found.";
     } else {
-        std::cout << DataTools::get_data_xor(db, user_id, std::move(password));
+        std::cout << DataTools::get_data_xor(db, user_id, user_type, std::move(password));
     }
 }
 
@@ -324,11 +325,11 @@ void edit_data(ObjStore& db, const int& user_id, const std::string& user_type, s
     choice_i = stoi(choice);
     if (choice_i == 1) {
         data = getstring("Input data: ");
-        DataTools::save_data_xor(db, user_id, data, std::move(password));
+        DataTools::save_data_xor(db, user_id, user_type, data, std::move(password));
     } else if (choice_i == 2) {
         data = getstring("Data will be added to your existing data.\nInput data: ");
         std::getline(std::cin, data);
-        std::string total_data = DataTools::get_data_xor(db, user_id, std::move(password)) + data;
+        std::string total_data = DataTools::get_data_xor(db, user_id, user_type, std::move(password)) + data;
         sql << "UPDATE " << user_type << "s SET data = '"
             << DataTools::return_data_xor(db, user_id, total_data, std::move(password))
             << "' WHERE user_id = " << user_id << ";";
