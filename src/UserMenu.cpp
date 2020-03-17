@@ -420,6 +420,16 @@ void show_announcements(ObjStore& db, const int& user_id, std::string user_type)
     }
 }
 
+void create_announcement(ObjStore& db, const int& user_id) {
+    make_box("Create Announcement");
+    std::string title,text;
+    title = getstring("Title: ");
+    text = getstring("Text: ");
+    Announcement ann(db, user_id, title, text);
+    std::cout << std::endl << "Announcement created.\nPress enter to continue...";
+    std::cin.ignore();
+}
+
 bool menu_admin(ObjStore& db, int& count, const int& user_id, std::string user_type) {
     std::string choice;
     int choice_i = 0;
@@ -427,7 +437,8 @@ bool menu_admin(ObjStore& db, int& count, const int& user_id, std::string user_t
     std::cout << setval(ST_BOLD, "2. ") << "Create User\n";
     std::cout << setval(ST_BOLD, "3. ") << "Delete User\n";
     std::cout << setval(ST_BOLD, "4. ") << "Show announcements\n";
-    std::cout << setval(ST_BOLD, "5. ") << "Exit\n";
+    std::cout << setval(ST_BOLD, "5. ") << "Create announcement\n";
+    std::cout << setval(ST_BOLD, "6. ") << "Exit\n";
     std::cout << "\nSelect action: ";
     if (count != 0) { std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n'); }
     std::getline(std::cin, choice);
@@ -447,6 +458,11 @@ bool menu_admin(ObjStore& db, int& count, const int& user_id, std::string user_t
     } else if (choice_i == 4) {
         clr();
         show_announcements(db, user_id, user_type);
+        clr();
+        return false;
+    } else if (choice_i == 5) {
+        clr();
+        create_announcement(db, user_id);
         clr();
         return false;
     }
@@ -503,6 +519,11 @@ bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::stri
     } else if (choice_i == 3) {
         clr();
         show_announcements(db, user_id, lecturer);
+        clr();
+        return false;
+    } else if (choice_i == 4) {
+        clr();
+        create_announcement(db, user_id);
         clr();
         return false;
     }
