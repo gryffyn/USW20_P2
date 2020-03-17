@@ -33,34 +33,40 @@ bool ObjStore::init_db() {
     create_connection();
     // creates Users table
     conn->execute("CREATE TABLE IF NOT EXISTS Users ("
-                  "user_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-                  "name TEXT NOT NULL,"
-                  "user TEXT NOT NULL UNIQUE,"
+                  "user_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+                  "name TEXT NOT NULL, "
+                  "user TEXT NOT NULL UNIQUE, "
                   "pwhash TEXT NOT NULL);");
     // creates Student table
     conn->execute("CREATE TABLE IF NOT EXISTS Students ("
-                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
-                  "data MEDIUMBLOB,"
-                  "last_notif TIMESTAMP,"
-                  "CONSTRAINT fk_s_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
+                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY, "
+                  "data MEDIUMBLOB, "
+                  "last_notif TIMESTAMP, "
+                  "CONSTRAINT fk_s_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id) "
                   "ON DELETE CASCADE);");
     // creates Lecturer table
     conn->execute("CREATE TABLE IF NOT EXISTS Lecturers ("
-                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
-                  "data MEDIUMBLOB,"
-                  "CONSTRAINT fk_l_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
+                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY, "
+                  "data MEDIUMBLOB, "
+                  "last_notif TIMESTAMP, "
+                  "CONSTRAINT fk_l_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id) "
                   "ON DELETE CASCADE);");
     // creates Admin table
     conn->execute("CREATE TABLE IF NOT EXISTS Admins ("
-                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
-                  "CONSTRAINT fk_a_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id)"
+                  "user_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY, "
+                  "last_notif TIMESTAMP, "
+                  "CONSTRAINT fk_a_user_id FOREIGN KEY (user_id) REFERENCES Users (user_id) "
                   "ON DELETE CASCADE);");
     // creates Announcements table
     conn->execute("CREATE TABLE IF NOT EXISTS Announcements ("
-                  "ann_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-                  "ann_time TIMESTAMP NOT NULL,"
-                  "ann_title TEXT NOT NULL,"
-                  "ann_text MEDIUMTEXT NOT NULL);");
+                  "ann_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,"
+                  "ann_author SMALLINT UNSIGNED NOT NULL, "
+                  "ann_time TIMESTAMP NOT NULL, "
+                  "ann_title TEXT NOT NULL, "
+                  "ann_text MEDIUMTEXT NOT NULL, "
+                  "PRIMARY KEY (ann_id, ann_author), "
+                  "CONSTRAINT fk_author FOREIGN KEY (ann_author) REFERENCES Users (user_id) "
+                  "ON DELETE CASCADE);");
     return status;
 }
 

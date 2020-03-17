@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS -L/opt/gcc10/lib64)
 
 add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.hpp src/Student.cpp include/Student.hpp
         src/ObjStore.cpp include/ObjStore.hpp src/Log.cpp include/Log.hpp src/UserMenu.cpp include/UserMenu.hpp
-        src/Lecturer.cpp include/Lecturer.hpp src/Admin.cpp include/Admin.hpp src/Announcement.cpp include/Announcement.hpp include/Xor.hpp)
+        src/Lecturer.cpp include/Lecturer.hpp src/Admin.cpp include/Admin.hpp src/Announcement.cpp include/Announcement.hpp include/Xor.hpp src/DataTools.cpp include/DataTools.hpp)
 
 # find directives
 find_package(yaml-cpp)
@@ -19,7 +19,7 @@ include_directories(include/sodium)
 include_directories(include)
 include_directories(/usr/include/mysql)
 include_directories(/usr/include/mysql/mysql)
-include_directories(include/mariadbpp)
+# include_directories(include/mariadbpp)
 
 # target linking
 target_link_libraries(${PROJECT_NAME} sodium)
