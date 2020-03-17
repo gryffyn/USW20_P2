@@ -57,8 +57,9 @@ bool ObjStore::init_db() {
                   "ON DELETE CASCADE);");
     // creates Announcements table
     conn->execute("CREATE TABLE IF NOT EXISTS Announcements ("
-                  "ann_id SMALLINT UNSIGNED NOT NULL PRIMARY KEY,"
+                  "ann_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
                   "ann_time TIMESTAMP NOT NULL,"
+                  "ann_title TEXT NOT NULL,"
                   "ann_text MEDIUMTEXT NOT NULL);");
     return status;
 }

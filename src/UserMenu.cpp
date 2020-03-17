@@ -7,16 +7,17 @@
 #include <mhash.h>
 
 #include <Admin.hpp>
-#include <boost/algorithm/string.hpp>
 #include <Lecturer.hpp>
 #include <Student.hpp>
 #include <User.hpp>
+#include <boost/algorithm/string.hpp>
 #include <ios>
 #include <iostream>
 #include <limits>
 #include <mariadb++/connection.hpp>
 #include <sstream>
 
+#include "Announcement.hpp"
 #include "Key.hpp"
 #include "ObjStore.hpp"
 
@@ -324,6 +325,72 @@ bool back_or_exit() {
     return (c == '9');
 }
 
+void show_announcements(ObjStore& db, const int& user_id) {
+    std::cout << make_box("Announcements");
+    std::stringstream sql, sql2;
+    std::string data;
+    std::string choice;
+    int choice_i = 0;
+    std::cout << setval(ST_BOLD, "1. ") << "Show unread announcements\n";
+    std::cout << setval(ST_BOLD, "2. ") << "Show announcement by ID\n";
+    std::cout << setval(ST_BOLD, "3. ") << "Go back\n";
+    std::cout << "\nSelect action: ";
+    // std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    std::getline(std::cin, choice);
+    choice_i = stoi(choice);
+    if (choice_i == 1) {
+        clr();
+        std::cout << make_box("Announcements");
+        sql << "SELECT last_notif FROM Students WHERE user_id = " << user_id << ";";
+        mariadb::result_set_ref result = db.select(sql.str());
+        result->next();
+        mariadb::date_time last = result->get_date_time(0);
+        sql2 << "SELECT * FROM Announcements WHERE ann_time >= '" << last << "';";
+        mariadb::result_set_ref result2 = db.select(sql2.str());
+        while (result2->next()) {
+            std::stringstream time;
+            time << result2->get_date_time("ann_time");
+            std::cout << std::endl << setval(ST_BOLD, result2->get_string("ann_title")) << std::endl
+                      << setval(ST_UNDER, time.str()) << std::endl
+                      << result->get_string("ann_text");
+        }
+        std::stringstream newtime;
+        newtime << "UPDATE Students SET last_notif = '" << mariadb::date_time::now_utc() << "' WHERE user_id = "
+                << user_id << ";";
+        db.insert(newtime.str());
+        std::cout << std::endl << "\nPress enter to continue...";
+        std::cin.ignore();
+    } else if (choice_i == 2) {
+        std::string ann_number = getstring("Enter announcement number: ");
+        /* std::stringstream ss;
+        for (char c : ann_number) {
+            if (isdigit(c)) {
+                ss << (c + '0');
+            }
+        } */
+        int ann_id = stoi(ann_number);
+        // Announcement ann(db);
+        std::stringstream ss;
+        ss << "SELECT * FROM Announcements WHERE ann_id = " << ann_id << ";";
+        try {
+            mariadb::result_set_ref result = db.select(ss.str());
+            result->next();
+            clr();
+            std::cout << make_box("Announcement");
+            std::stringstream time2;
+            time2 << result->get_date_time("ann_time");
+            std::cout << setval(ST_BOLD, result->get_string("ann_title")) << std::endl << setval(ST_UNDER, time2.str())
+                      << std::endl << std::endl << result->get_string("ann_text");
+            std::cout << std::endl << "\nPress enter to continue...";
+            std::cin.ignore();
+        } catch (std::out_of_range& e) {
+            std::cout << std::endl << "No announcement found with that number.";
+            std::cout << std::endl << "Press enter to continue...";
+            std::cin.ignore();
+        }
+    }
+}
+
 bool menu_admin(ObjStore& db, int& count) {
     std::string choice;
     int choice_i = 0;
@@ -364,14 +431,16 @@ bool menu_student(ObjStore& db, int& count, const int& user_id, const std::strin
     if (choice_i == 1) {
         clr();
         show_data(db, user_id, student);
-        if (!back_or_exit()) { return true; }
-        else { clr(); }
+        if (!back_or_exit()) { return true; } else { clr(); }
     } else if (choice_i == 2) {
         clr();
         edit_data(db, user_id, student);
-        if (!back_or_exit()) { return true; }
-        else { clr(); }
-    }
+        if (!back_or_exit()) { return true; } else { clr(); }
+    } else if (choice_i == 3) {
+        clr();
+        show_announcements(db, user_id);
+        if (!back_or_exit()) { return true; } else { clr(); }
+    } else { return true; }
 }
 
 bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::string& student) {
@@ -389,14 +458,12 @@ bool menu_lecturer(ObjStore& db, int& count, const int& user_id, const std::stri
     if (choice_i == 1) {
         clr();
         show_data(db, user_id, student);
-        if (!back_or_exit()) { return true; }
-        else { clr(); }
+        if (!back_or_exit()) { return true; } else { clr(); }
     } else if (choice_i == 2) {
         clr();
         edit_data(db, user_id, student);
-        if (!back_or_exit()) { return true; }
-        else { clr(); }
-    }
+        if (!back_or_exit()) { return true; } else { clr(); }
+    } else { return true; }
 }
 
 void show_menu(ObjStore& db, const int& user_id) {

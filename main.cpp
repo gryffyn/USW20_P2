@@ -5,16 +5,17 @@
 
 #include <sodium.h>
 
+#include <Student.hpp>
 #include <iostream>
 #include <vector>
 
+#include "Admin.hpp"
 #include "Key.hpp"
 #include "Log.hpp"
 #include "ObjStore.hpp"
 #include "User.hpp"
-#include "cxxopts.hpp"
 #include "UserMenu.hpp"
-#include "Admin.hpp"
+#include "cxxopts.hpp"
 
 bool verbose;
 

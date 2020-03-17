@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS -L/opt/gcc10/lib64)
 
 add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.hpp src/Student.cpp include/Student.hpp
         src/ObjStore.cpp include/ObjStore.hpp src/Log.cpp include/Log.hpp src/UserMenu.cpp include/UserMenu.hpp
-        src/Lecturer.cpp include/Lecturer.hpp src/Admin.cpp include/Admin.hpp)
+        src/Lecturer.cpp include/Lecturer.hpp src/Admin.cpp include/Admin.hpp src/Announcement.cpp include/Announcement.hpp)
 
 # find directives
 find_package(yaml-cpp)
