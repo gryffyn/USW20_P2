@@ -8,6 +8,10 @@
 
 #include <string>
 
+namespace KeyDer {
+std::string create_derived(std::string pwhash, std::string password);
+}
+
 class Key {
    public:
     explicit Key();

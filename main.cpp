@@ -5,16 +5,17 @@
 
 #include <sodium.h>
 
+#include <Student.hpp>
 #include <iostream>
 #include <vector>
 
+#include "Admin.hpp"
 #include "Key.hpp"
 #include "Log.hpp"
 #include "ObjStore.hpp"
 #include "User.hpp"
-#include "Student.hpp"
-#include "cxxopts.hpp"
 #include "UserMenu.hpp"
+#include "cxxopts.hpp"
 
 bool verbose;
 
@@ -38,8 +39,8 @@ int main(int argc, char **argv) {
     // std::cout << "Adding user...";
     // User user(db, "Evan Penner", "gryffyn", "THISISaverysecurepassword23123?!");
     // std::cout << std::endl << "Result = " << user.creation_result << std::endl;
-
-    Login::login_menu(db);
+    std::pair<std::string, int> loginuser = Login::login_menu(db);
+    UserMenu::show_menu(db, loginuser.second, loginuser.first);
 
     /*
     std::string sql = "SELECT * FROM Users;";
