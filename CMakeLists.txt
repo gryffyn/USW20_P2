@@ -12,6 +12,7 @@ add_executable(USW20_P2 main.cpp src/Key.cpp src/User.cpp include/User.hpp src/S
 # find directives
 find_package(yaml-cpp)
 find_package(mariadbclientpp)
+find_package(Boost)
 
 # include
 include_directories(include/sodium)
