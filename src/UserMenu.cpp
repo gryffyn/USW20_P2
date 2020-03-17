@@ -122,7 +122,7 @@ std::string get_name(ObjStore& db, const int& user_id) {
     return result->get_string(1);
 }
 
-void login_menu(ObjStore& db) {
+int login_menu(ObjStore& db) {
     std::string username;
     int user_id = 0;
     bool user_success = false, pass_success = false;
@@ -142,20 +142,20 @@ void login_menu(ObjStore& db) {
                 std::string password;
                 std::getline(std::cin, password);
                 if (!login(db, user_id, password)) {
-                    std::cout << std::endl << endval(ST_INVIS);
+                    std::cout << std::endl;
                     std::cout << setval(FG_RED, "🗙") << " Password incorrect. Please try again.\n";
                 } else {
                     pass_success = true;
-                    std::cout << std::endl << endval(ST_INVIS);
                     std::string name = get_name(db, user_id);
                     std::cout << "Logging in....." << std::endl;
-                    sleep(1);
+                    // sleep(1);
                     clr();
                     std::cout << "Welcome, " << name.substr(0, name.find(' ')) << ".";
                 }
             }
         }
     }
+    return user_id;
 }
 
 }  // namespace Login
@@ -172,8 +172,7 @@ std::string getstring(std::string output) {
 // returns if row exists or not
 bool exists_row(ObjStore& db, std::string sql) {
     mariadb::result_set_ref result = db.select(sql);
-    result->next();
-    return result->get_boolean(0);
+    if (result->next()) { return true; }
 }
 
 // checks the user type by looking in what table(s) the user_id exists, returns the types
@@ -181,24 +180,13 @@ std::vector<std::string> check_user_type(ObjStore& db, const int& user_id) {
     std::vector<std::string> user_types{"Student", "Lecturer", "Admin"}, output;
     std::stringstream sql;
     for (std::string type : user_types) {
-        sql << "SELECT EXISTS (SELECT * from " << type << "s WHERE user_id = " << user_id << ");";
+        sql << "SELECT * from " << type << "s WHERE user_id = " << user_id << ";";
         if (exists_row(db, sql.str())) {
             output.emplace_back(type);
         }
         std::stringstream().swap(sql);
     }
     return output;
-}
-
-void show_menu(ObjStore& db, const int& user_id) {
-    std::vector<std::string> user_type = check_user_type(db, user_id);
-    std::cout << "\nMenu Options:\n";
-    if (std::find(user_type.begin(), user_type.end(), "Admin") != user_type.end()) {
-        std::cout << setval(ST_BOLD, "1. ") << "List Users";
-        std::cout << setval(ST_BOLD, "2. ") << "Create User";
-        std::cout << setval(ST_BOLD, "1. ") << "Delete User";
-        std::cout << setval(ST_BOLD, "1. ") << "List Users";
-    }
 }
 
 std::string set_user_type(const int& choice) {
@@ -209,27 +197,27 @@ std::string set_user_type(const int& choice) {
 }
 
 void create_user(ObjStore& db) {
-    std::cout <<make_box(setval(ST_BOLD, "Create User"));
+    std::cout << make_box("Create User");
     std::string username, name, password, typechoice;
     std::vector<int> typechoices;
     // get user info
     username = getstring(setval(ST_BOLD, "Username: "));
-    name = getstring(setval(ST_BOLD, "\nName: "));
+    name = getstring(setval(ST_BOLD, "Name: "));
     Key pwhash;
     bool pass_success{};
     while (!pass_success) {
         try {
-            pwhash.create_key(getstring(setval(ST_BOLD, "\nPassword: ")));
+            pwhash.create_key(getstring(setval(ST_BOLD, "Password: ")));
             pass_success = true;
         } catch (Key::pass_exception& e) {
             std::cout << e.what();
         }
     }
-    std::cout << "\n" << setval(ST_BOLD, "User type(s):") << "\n1. Student\n" << "2. Lecturer\n" << "3. Admin\n";
+    std::cout << setval(ST_BOLD, "User type(s):") << "\n1. Student\n" << "2. Lecturer\n" << "3. Admin\n";
     typechoice = getstring("Enter comma separated list of user types: ");
     for (char c : typechoice) {
-        if (isalpha(c)) {
-            typechoices.emplace_back(c);
+        if (isdigit(c)) {
+            typechoices.emplace_back(c - '0');
         }
     }
     std::cout << "\nCreating user...";
@@ -241,4 +229,24 @@ void create_user(ObjStore& db) {
     std::cout << "\nUser created.";
 }
 
+void show_menu(ObjStore& db, const int& user_id) {
+    std::vector<std::string> user_type = check_user_type(db, user_id);
+    std::string choice;
+    int choice_i;
+    std::cout << "\nMenu Options:\n";
+    if (std::find(user_type.begin(), user_type.end(), "Admin") != user_type.end()) {
+        std::cout << setval(ST_BOLD, "1. ") << "List Users\n";
+        std::cout << setval(ST_BOLD, "2. ") << "Create User\n";
+        std::cout << setval(ST_BOLD, "3. ") << "Delete User\n";
+        std::cout << setval(ST_BOLD, "4. ") << "List Users\n";
+        std::cout << "Select action: ";
+        std::getline(std::cin, choice);
+        choice_i = stoi(choice);
+        if (choice_i == 1) {
+        } else if (choice_i == 2) {
+            create_user(db);
+        }
+    }
 }
+
+}  // namespace UserMenu

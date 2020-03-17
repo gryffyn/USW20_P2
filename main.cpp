@@ -12,9 +12,9 @@
 #include "Log.hpp"
 #include "ObjStore.hpp"
 #include "User.hpp"
-#include "Student.hpp"
 #include "cxxopts.hpp"
 #include "UserMenu.hpp"
+#include "Admin.hpp"
 
 bool verbose;
 
@@ -39,7 +39,8 @@ int main(int argc, char **argv) {
     // User user(db, "Evan Penner", "gryffyn", "THISISaverysecurepassword23123?!");
     // std::cout << std::endl << "Result = " << user.creation_result << std::endl;
 
-    Login::login_menu(db);
+    int user_id = Login::login_menu(db);
+    UserMenu::show_menu(db, user_id);
 
     /*
     std::string sql = "SELECT * FROM Users;";

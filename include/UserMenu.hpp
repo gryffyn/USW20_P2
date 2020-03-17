@@ -9,7 +9,11 @@
 #include "ObjStore.hpp"
 
 namespace Login {
-void login_menu(ObjStore& db);
+int login_menu(ObjStore& db);
+}
+
+namespace UserMenu {
+void show_menu(ObjStore& db, const int& user_id);
 }
 
 #endif  // USW20_P2_USERMENU_HPP
